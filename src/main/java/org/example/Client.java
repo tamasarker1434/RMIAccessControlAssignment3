@@ -31,7 +31,42 @@ public class Client {
 
     public static void main(String[] args) throws MalformedURLException, NotBoundException, RemoteException, SQLException {
         System.out.println("------" + iPrintServices.echo("Server is Connected------"));
-        ShowLoginMenu();
+        String choice = "";
+        do {
+            System.out.println("1. Login\n2. Delete User\n3. Signup User\n0. Exit");
+            System.out.printf("Enter Choice :");
+            choice = scannerObj.nextLine();
+            switch (choice){
+                case "1":
+                    ShowLoginMenu();
+                    break;
+                case "2":
+                    DeleteUser();
+                    break;
+                case "3":
+                    SignupUser();
+                    break;
+                case "0":
+                    choice = "0";
+                    break;
+                default:
+                    if (choice!="0")
+                        System.out.println("Enter Valid Choice!!!");
+                    break;
+            }
+        }while (choice!="0");
+    }
+    private static void SignupUser() throws RemoteException, SQLException{
+
+    }
+    private static void DeleteUser() throws RemoteException, SQLException{
+        System.out.printf("Enter Username = ");
+        String userId = scannerObj.nextLine();
+        boolean result = iPrintServices.deleteUser(userId);
+        if (result)
+            System.out.println("Action Successful!!!");
+        else
+            System.out.println("Action Failed!!!");
     }
     private static void ShowLoginMenu() throws RemoteException, SQLException {
         String userId, password ;

@@ -30,7 +30,7 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
         return false;
     }
 
-    /*private ResultSet ExecuteQuery(String query){
+    private ResultSet ExecuteQuery(String query){
         String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";
         ResultSet resultSet;
         try {
@@ -43,7 +43,7 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
             throw new RuntimeException(e);
         }
         return resultSet;
-    }*/
+    }
     @Override
     public Dictionary<String, UserDetails> signIn(String userId, String password) throws RemoteException {
         Dictionary<String,UserDetails> userInfo = new Hashtable<>();
@@ -169,5 +169,25 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
         }
         else
             return null;
+    }
+    @Override
+    public boolean deleteUser(String userId){
+        boolean result = false;
+        String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";
+        String query = "UPDATE userprofile SET activeuser = 0 WHERE userprofile.userid ='" + userId + "'";
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url,username,dbPassword);
+            Statement statement = connection.createStatement();
+            int resultSet = statement.executeUpdate(query);
+            if (resultSet != 0)
+                result = true;
+            connection.close();
+        } catch (Exception e) {
+            result = false;
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 }

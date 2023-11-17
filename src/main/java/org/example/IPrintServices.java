@@ -28,4 +28,6 @@ public interface IPrintServices extends Remote {
     public String readConfig(String parameter, String sessionId) throws RemoteException;
     // sets the parameter on the print server to value
     public String setConfig(String parameter, String value, String sessionId) throws RemoteException;
+    //Delete user
+    public boolean deleteUser(String userId) throws RemoteException;
 }
