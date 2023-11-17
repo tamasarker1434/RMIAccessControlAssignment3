@@ -57,7 +57,19 @@ public class Client {
         }while (choice!="0");
     }
     private static void SignupUser() throws RemoteException, SQLException{
-
+        UserDetails userDetails = new UserDetails();
+        System.out.printf("Enter Username = ");
+        userDetails.userName = scannerObj.nextLine();
+        System.out.printf("Enter password = ");
+        userDetails.password = passwordConversion(scannerObj.nextLine());
+        System.out.println("1. Management\n2. Service technician\n3. Power User\n4. Ordinary User");
+        System.out.printf("Enter User Role = ");
+        userDetails.userRoleId = Integer.parseInt(scannerObj.nextLine());
+        boolean result = iPrintServices.singnUpUser(userDetails);
+        if (result)
+            System.out.println("Action Successful!!!");
+        else
+            System.out.println("Action Failed!!!");
     }
     private static void DeleteUser() throws RemoteException, SQLException{
         System.out.printf("Enter Username = ");

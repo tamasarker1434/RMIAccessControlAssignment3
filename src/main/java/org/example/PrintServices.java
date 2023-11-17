@@ -171,6 +171,25 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
             return null;
     }
     @Override
+    public boolean singnUpUser(UserDetails userDetails){
+        boolean result = false;
+        String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";
+        String query = "INSERT INTO `userprofile` (`id`, `userid`, `password`, `ulevel`, `activeuser`) VALUES (NULL, '"+userDetails.userName+"', '"+userDetails.password+"', '"+userDetails.userRoleId+"', '1')";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url,username,dbPassword);
+            Statement statement = connection.createStatement();
+            int resultSet = statement.executeUpdate(query);
+            if (resultSet != 0)
+                result = true;
+            connection.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    @Override
     public boolean deleteUser(String userId){
         boolean result = false;
         String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";

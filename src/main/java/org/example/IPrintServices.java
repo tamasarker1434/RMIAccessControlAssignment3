@@ -30,4 +30,6 @@ public interface IPrintServices extends Remote {
     public String setConfig(String parameter, String value, String sessionId) throws RemoteException;
     //Delete user
     public boolean deleteUser(String userId) throws RemoteException;
+    //Signup User
+    public boolean singnUpUser(UserDetails userDetails) throws RemoteException;
 }
