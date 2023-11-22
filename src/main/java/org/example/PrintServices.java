@@ -30,20 +30,6 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
         return false;
     }
 
-    private ResultSet ExecuteQuery(String query){
-        String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";
-        ResultSet resultSet;
-        try {
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            Connection connection = DriverManager.getConnection(url,username,dbPassword);
-            Statement statement = connection.createStatement();
-            resultSet = statement.executeQuery(query);
-            connection.close();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-        return resultSet;
-    }
     @Override
     public Dictionary<String, UserDetails> signIn(String userId, String password) throws RemoteException {
         Dictionary<String,UserDetails> userInfo = new Hashtable<>();
@@ -58,7 +44,6 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
             Statement statement = connection.createStatement();
             ResultSet resultSet = statement.executeQuery(query);
             while (resultSet.next()){
-                //if (resultSet.getString("userid").equals(userId) && resultSet.getString("password").equals(password)) {
                 Random random = new Random();
                 int sessionId = random.nextInt();
                 session =Integer.toString(sessionId);
@@ -67,7 +52,6 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
                 userDetails.userRoleId = resultSet.getInt("ulevel");
                 userDetails.userRole = resultSet.getString("roletitle");
                 functionAccesed.put(resultSet.getInt("functionid"), resultSet.getString("functiontitle"));
-                //}
             }
 
             if ( userDetails.userId == 0)
