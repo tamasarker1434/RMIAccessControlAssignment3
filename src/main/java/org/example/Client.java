@@ -1,7 +1,6 @@
 package org.example;
 
 import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
@@ -33,7 +32,7 @@ public class Client {
         System.out.println("------" + iPrintServices.echo("Server is Connected------"));
         String choice = "";
         do {
-            System.out.println("1. Login\n2. Delete User\n3. Signup User\n0. Exit");
+            System.out.println("1. Login\n2. Delete User\n3. Signup User\n4. Combine Role\n5. Assign Role\n0. Exit");
             System.out.printf("Enter Choice :");
             choice = scannerObj.nextLine();
             switch (choice){
@@ -45,6 +44,32 @@ public class Client {
                     break;
                 case "3":
                     SignupUser();
+                    break;
+                case "4":
+                    System.out.println("1. Management\n2. Service Technician\n3. Power User\n4. Ordinary User");
+                    System.out.printf("Enter 1st Role :");
+                    int roleOne = Integer.parseInt(scannerObj.nextLine());
+                    System.out.printf("Enter 2nd Role :");
+                    int roleTwo= Integer.parseInt(scannerObj.nextLine());
+                    System.out.printf("Enter Role Name :");
+                    String roleName = scannerObj.nextLine();
+                    boolean  result = iPrintServices.CombineRole(roleOne,roleTwo,roleName);
+                    if (result)
+                        System.out.println("Successfully Create Role");
+                    else
+                        System.out.println("Action Failed");
+                    break;
+                case "5":
+                    System.out.println("1. Management\n2. Service Technician\n3. Power User\n4. Ordinary User\n5. New Role");
+                    System.out.printf("Enter Role :");
+                    int role= Integer.parseInt(scannerObj.nextLine());
+                    System.out.printf("Enter Employee Name :");
+                    String userName = scannerObj.nextLine();
+                    int results = iPrintServices.AssignRoleGeorge(userName,role);
+                    if (results == 1)
+                        System.out.println("Successfully Assigned Role");
+                    else
+                        System.out.println("Action Failed");
                     break;
                 case "0":
                     choice = "0";
@@ -87,7 +112,7 @@ public class Client {
         System.out.printf("Enter Password = ");
         password = scannerObj.nextLine();
         password = passwordConversion(password);
-        Dictionary<String,UserDetails> userInfo = iPrintServices.signIn(userId, password);
+        Dictionary<String,UserDetails> userInfo = iPrintServices.loginUser(userId, password);
         if (userInfo.size()>0) {
             ShowPrintingMenu(userInfo);
         }

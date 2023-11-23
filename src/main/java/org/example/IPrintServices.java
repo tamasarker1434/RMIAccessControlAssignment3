@@ -2,13 +2,12 @@ package org.example;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
 import java.util.Dictionary;
 
 public interface IPrintServices extends Remote {
     //Sign in Method
-    public Dictionary<String,UserDetails> signIn(String userId, String password) throws RemoteException, SQLException;
+    public Dictionary<String,UserDetails> loginUser(String userId, String password) throws RemoteException, SQLException;
     public String echo(String input) throws RemoteException;
     // prints file filename on the specified printer
     public String print(String filename, String printer, String sessionId) throws RemoteException;
@@ -32,4 +31,6 @@ public interface IPrintServices extends Remote {
     public boolean deleteUser(String userId) throws RemoteException;
     //Signup User
     public boolean singnUpUser(UserDetails userDetails) throws RemoteException;
+    public Boolean CombineRole(int roleOne, int roleTwo,String roleName) throws RemoteException;
+    public int AssignRoleGeorge(String userId, int roleId) throws RemoteException;
 }

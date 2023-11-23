@@ -31,13 +31,13 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
     }
 
     @Override
-    public Dictionary<String, UserDetails> signIn(String userId, String password) throws RemoteException {
+    public Dictionary<String, UserDetails> loginUser(String userId, String password) throws RemoteException {
         Dictionary<String,UserDetails> userInfo = new Hashtable<>();
         Dictionary<Integer, String> functionAccesed = new Hashtable<>();
         String session = null,query;
         UserDetails userDetails = new UserDetails();
         query = "SELECT * from userprofile INNER JOIN userrole ON userprofile.ulevel = userrole.id INNER JOIN functionaccess ON functionaccess.roleid = userrole.id INNER JOIN functions ON functionaccess.fuctionid = functions.functionid WHERE userprofile.activeuser = 1 AND userprofile.userid = '"+userId+"' AND userprofile.password = '"+password+"'";
-        String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";
+        String url = "jdbc:mysql://localhost:3306/jdbcprinterdb", username ="root", dbPassword="";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection connection = DriverManager.getConnection(url,username,dbPassword);
@@ -157,7 +157,7 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
     @Override
     public boolean singnUpUser(UserDetails userDetails){
         boolean result = false;
-        String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";
+        String url = "jdbc:mysql://localhost:3306/jdbcprinterdb", username ="root", dbPassword="";
         String query = "INSERT INTO `userprofile` (`id`, `userid`, `password`, `ulevel`, `activeuser`) VALUES (NULL, '"+userDetails.userName+"', '"+userDetails.password+"', '"+userDetails.userRoleId+"', '1')";
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -176,7 +176,7 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
     @Override
     public boolean deleteUser(String userId){
         boolean result = false;
-        String url = "jdbc:mysql://localhost:3306/jdbcPrinterDB", username ="root", dbPassword="";
+        String url = "jdbc:mysql://localhost:3306/jdbcprinterdb", username ="root", dbPassword="";
         String query = "UPDATE userprofile SET activeuser = 0 WHERE userprofile.userid ='" + userId + "'";
 
         try {
@@ -189,6 +189,48 @@ public class PrintServices extends UnicastRemoteObject implements IPrintServices
             connection.close();
         } catch (Exception e) {
             result = false;
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+    @Override
+    public Boolean CombineRole(int roleOne, int roleTwo,String roleName){
+        Boolean result=false;
+        String url = "jdbc:mysql://localhost:3306/jdbcprinterdb", username ="root", dbPassword="";
+        String query = "SELECT DISTINCT functionaccess.fuctionid FROM functionaccess \n" +
+                "INNER JOIN functions ON functions.functionid = functionaccess.fuctionid\n" +
+                "WHERE functionaccess.roleid = "+roleOne+" OR functionaccess.roleid = "+ roleTwo;
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url,username,dbPassword);
+            Statement statement = connection.createStatement();
+            ResultSet resultSet = statement.executeQuery(query);
+            statement.addBatch("INSERT INTO `userrole` (`id`, `roletitle`) VALUES ('5', '"+roleName+"')");
+            while (resultSet.next()){
+                query = "INSERT INTO `functionaccess` (`id`, `roleid`, `fuctionid`) VALUES (NULL, '5', '"+resultSet.getInt("fuctionid")+"')";
+                statement.addBatch(query);
+            }
+            statement.executeBatch();
+            result = true;
+            connection.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+    @Override
+    public int AssignRoleGeorge(String userId, int roleId){
+        int result;
+        String url = "jdbc:mysql://localhost:3306/jdbcprinterdb", username ="root", dbPassword="";
+        String query = "UPDATE  userprofile SET userprofile.ulevel = "+roleId+" WHERE userprofile.userid = '"+userId+"'";
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection connection = DriverManager.getConnection(url,username,dbPassword);
+            Statement statement = connection.createStatement();
+            result = statement.executeUpdate(query);
+            connection.close();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return result;
